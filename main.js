@@ -27,66 +27,77 @@
 
 
 
-  (function () {
-    const FORM_URL = "https://forms.office.com/r/qAsT3PeL60";
-    document.getElementById("backToForm").href = FORM_URL;
+ (function () {
+  // 1) ตั้งลิงก์กลับแบบฟอร์ม
+  const FORM_URL = "https://forms.office.com/r/qAsT3PeL60";
+  const backBtn = document.getElementById("backToForm");
+  if (backBtn) backBtn.href = FORM_URL;
 
-    const params = new URLSearchParams(window.location.search);
-    const result = document.getElementById("result");
+  // 2) ที่แสดงผล
+  const result = document.getElementById("result");
+  if (!result) return; // ถ้าไม่มี result ให้หยุดอย่างปลอดภัย
 
-    // --- 1) อ่าน JSON เดียวจากพารามิเตอร์ data ---
-    const dataParam = params.get("data");
-    let name = "";
-    let box = "";
+  // 3) อ่านค่าพารามิเตอร์
+  const params = new URLSearchParams(window.location.search);
+  const dataParam = params.get("data");
 
-    if (dataParam) {
-      try {
-        // data ถูกส่งมาด้วย uriComponent(...) ใน Flow → ต้อง decode และ parse
-        const jsonStr = decodeURIComponent(dataParam);
-        const obj = JSON.parse(jsonStr);
-        name = (obj?.name ?? "").toString().trim();
-        box  = (obj?.boxNo ?? "").toString().trim();
-      } catch (err) {
-        console.error("Cannot parse data param:", err);
-      }
-    } else {
-      // --- 2) Fallback: รองรับกรณีส่งเป็น query แยก (เผื่อมีลิงก์เก่า) ---
-      name = (params.get("Name") ?? params.get("name") ?? "").toString().trim();
-      box  = (params.get("BoxNo") ?? params.get("box") ?? "").toString().trim();
+  let name = "";
+  let box  = "";
+
+  if (dataParam) {
+    try {
+      const jsonStr = decodeURIComponent(dataParam);
+      const obj = JSON.parse(jsonStr);
+
+      // รองรับทั้ง key แบบเล็กและใหญ่
+      name = (
+        obj?.name ??
+        obj?.Name ??
+        ""
+      ).toString().trim();
+
+      box = (
+        obj?.boxNo ??
+        obj?.BoxNo ??
+        ""
+      ).toString().trim();
+    } catch (err) {
+      console.error("Cannot parse data param:", err);
     }
+  } else {
+    // Fallback: ลิงก์เก่าแบบ query เดี่ยว
+    name = (params.get("Name") ?? params.get("name") ?? "").toString().trim();
+    box  = (params.get("BoxNo") ?? params.get("box") ?? "").toString().trim();
+  }
 
-    // --- 3) แสดงผล ---
-    if (name && box) {
-      // สร้างโหนดให้ปลอดภัยต่อ XSS มากกว่า innerHTML ตรง ๆ
-      const strong = document.createElement("strong");
-      strong.textContent = name;
+  // 4) แสดงผล
+  if (name && box) {
+    const strong = document.createElement("strong");
+    strong.textContent = name;
 
-      const boxSpan = document.createElement("span");
-      boxSpan.className = "box";
-      boxSpan.textContent = `Box หมายเลข ${box}`;
+    const boxSpan = document.createElement("span");
+    boxSpan.className = "box";
+    boxSpan.textContent = `Box หมายเลข ${box}`;
 
-      // เคลียร์ก่อน
-      result.innerHTML = "";
+    result.innerHTML = "";
+    const line1 = document.createTextNode("คุณ ");
+    const br1 = document.createElement("br");
+    const br2 = document.createElement("br");
+    const tail = document.createTextNode("เรียบร้อยแล้ว ✅");
 
-      const line1 = document.createTextNode("คุณ ");
-      const br1 = document.createElement("br");
-      const br2 = document.createElement("br");
-      const tail = document.createTextNode("เรียบร้อยแล้ว ✅");
-
-      result.appendChild(line1);
-      result.appendChild(strong);
-      result.appendChild(br1);
-      result.appendChild(boxSpan);
-      result.appendChild(br2);
-      result.appendChild(tail);
-    } else {
-      result.innerHTML = `
-        <span class="error">
-          ไม่พบข้อมูล<br>
-          กรุณาเข้าผ่านลิงก์ที่ได้รับหลังจากส่งแบบฟอร์ม
-        </span>
-      `;
-    }
-  })();
-
-  
+    result.appendChild(line1);
+    result.appendChild(strong);
+    result.appendChild(br1);
+    result.appendChild(boxSpan);
+    result.appendChild(br2);
+    result.appendChild(tail);
+  } else {
+    result.innerHTML = `
+      <span class="error">
+        ไม่พบข้อมูล<br>
+        กรุณาเข้าผ่านลิงก์ที่ได้รับหลังจากส่งแบบฟอร์ม
+      </span>
+    `;
+  }
+})();
+``
