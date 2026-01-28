@@ -1,0 +1,68 @@
+:root {
+  --bg: linear-gradient(to bottom right, #ddffee, #daffe9);
+  --text-color: hsl(150deg 36% 13%);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  background: var(--bg);
+  font-family: "Luckiest Guy", cursive;
+  overflow: hidden;
+}
+
+.frog-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+
+.wrapper {
+  display: flex;
+  gap: 1rem;
+  font-size: 5rem;
+  color: var(--text-color);
+  z-index: 10;
+}
+
+.actions {
+      margin-top: 24px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button, a.btn {
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+      color: #140404;
+      /* background: var(--primary); */
+      background: #79cff4;
+    }
+
+    /* .toggle {
+      background: #64748b;
+    } */
+
+    body.dark {
+      --bg: #0f172a;
+      --card: #e3e6eb;
+      /* --card: #1e293b; */
+      --text: #e5e7eb;
+      --subtext: #cbd5e1;
+      --primary: #38bdf8;
+      --error: #f87171;
+    }
